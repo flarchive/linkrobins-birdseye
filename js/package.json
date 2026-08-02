@@ -1,0 +1,23 @@
+{
+    "private": true,
+    "name": "@linkrobins/birdseye",
+    "prettier": "@flarum/prettier-config",
+    "scripts": {
+        "dev": "webpack --mode development --watch",
+        "build": "webpack --mode production",
+        "format": "prettier --write src",
+        "format-check": "prettier --check src"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.29.0",
+        "@babel/preset-env": "^7.29.0",
+        "@babel/preset-typescript": "^7.29.0",
+        "@flarum/prettier-config": "^1.0.0",
+        "babel-loader": "^9.2.1",
+        "flarum-tsconfig": "^2.0.0",
+        "prettier": "^3.3.0",
+        "typescript": "^5.0.0",
+        "webpack": "^5.104.1",
+        "webpack-cli": "^4.9.1"
+    }
+}
