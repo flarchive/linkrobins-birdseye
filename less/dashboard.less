@@ -1,0 +1,545 @@
+// Birdseye dashboard, shared by the admin settings page and the forum's
+// Analytics modal. Self-contained (Flarum admin has no grid utilities);
+// colors lean on Flarum's CSS variables so the cards follow the active
+// theme, with the brand cyan as the single data accent.
+@birdseye-accent: rgba(30, 195, 214, 1);
+
+.BirdseyeDashboard {
+  margin-top: 24px;
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  &-ranges {
+    display: flex;
+    gap: 6px;
+  }
+
+  // Header right-hand controls: the bars/pie toggle sits beside the range
+  // switcher, wrapping under it on narrow widths.
+  &-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &-toggle {
+    display: flex;
+    gap: 6px;
+  }
+
+  // One row of six, filling the full container width (auto-fill would keep
+  // phantom empty tracks and leave dead space on the right).
+  &-tiles {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+
+    @media (max-width: 1100px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (max-width: 580px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  &-tile {
+    background: var(--body-bg-light, var(--body-bg));
+    border: 1px solid var(--control-bg);
+    border-radius: var(--border-radius);
+    padding: 12px 14px;
+  }
+
+  &-tileLabel {
+    color: var(--muted-color);
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  &-tileValue {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  &-card {
+    background: var(--body-bg-light, var(--body-bg));
+    border: 1px solid var(--control-bg);
+    border-radius: var(--border-radius);
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+
+  &-cardTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
+
+  &-cardTitleText {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-cardTitleRight {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+  }
+
+  // Per-card CSV download: a quiet icon that lifts on hover, so it never
+  // competes with the card's data.
+  &-export {
+    background: none;
+    border: 0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--muted-more-color, var(--muted-color));
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text-color);
+      background: var(--control-bg);
+    }
+  }
+
+  &-span {
+    color: var(--muted-color);
+    font-weight: 400;
+    font-size: 12px;
+  }
+
+  &-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 180px;
+  }
+
+  &-chartCol {
+    flex: 1 1 0;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    position: relative;
+
+    // Instant tooltip from data-label — the whole column (not just the bar)
+    // is the hover target, so short bars are as reachable as tall ones.
+    &:hover::after {
+      content: attr(data-label);
+      position: absolute;
+      top: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      pointer-events: none;
+      white-space: nowrap;
+      background: rgba(9, 15, 24, 0.95);
+      color: #f2f6fb;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 12px;
+      line-height: 1.4;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    &:hover .BirdseyeDashboard-chartBar {
+      background: fade(@birdseye-accent, 85%);
+    }
+  }
+
+  &-chartBar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    background: fade(@birdseye-accent, 55%);
+    min-height: 0;
+    transition: height 0.2s ease;
+  }
+
+  // Six list cards as a firm 3-across grid (two rows of three).
+  &-lists {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+
+    @media (max-width: 1100px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 580px) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .BirdseyeDashboard-card {
+      margin-bottom: 0;
+    }
+  }
+
+  // "Today so far" strip: inline live counts from the buffer.
+  &-todayStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+  }
+
+  &-todayValue {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  &-todayLabel {
+    color: var(--muted-color);
+    font-size: 12px;
+  }
+
+  &-note {
+    margin: 8px 0 0;
+    font-size: 12px;
+  }
+
+  &-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    margin: 3px 0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  &-rowBar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    border-radius: 6px;
+    background: fade(@birdseye-accent, 12%);
+  }
+
+  &-rowLabel {
+    position: relative;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Linked breakdown rows (top pages, discussions, tags, searches, needs a
+  // reply) — read as body text until hovered, then reveal as a link.
+  &-rowLabel a,
+  &-legendLabel a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      color: @birdseye-accent;
+      text-decoration: underline;
+    }
+  }
+
+  &-rowValue {
+    position: relative;
+    font-weight: 600;
+  }
+
+  // Donut breakdown (devices, sources): a conic-gradient ring beside a
+  // value/percentage legend.
+  &-donutWrap {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  &-donut {
+    position: relative;
+    flex: 0 0 auto;
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+  }
+
+  &-donutHole {
+    position: absolute;
+    inset: 21px;
+    border-radius: 50%;
+    background: var(--body-bg-light, var(--body-bg));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1;
+  }
+
+  &-donutTotal {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  &-donutTotalLabel {
+    font-size: 10px;
+    color: var(--muted-color);
+    margin-top: 3px;
+  }
+
+  &-legend {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &-legendRow {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 2px 0;
+    font-size: 13px;
+  }
+
+  &-legendSwatch {
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  &-legendLabel {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-legendValue {
+    flex: 0 0 auto;
+    color: var(--muted-color);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &-map {
+    overflow: hidden;
+  }
+
+  &-map svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    // Zooming scales from the map's own top-left, which is what the offset
+    // maths in applyMapTransform() assumes.
+    transform-origin: 0 0;
+
+    path {
+      fill: rgba(128, 144, 160, 0.25);
+      stroke: none;
+      transition: fill 0.2s;
+
+      // is-named marks the country the tooltip is currently naming, the only
+      // marker there is on a touchscreen, where the tap leaves no hover behind.
+      &:hover,
+      &.is-named {
+        fill: rgba(128, 144, 160, 0.45);
+      }
+
+      &[data-v] {
+        cursor: default;
+
+        // Countries with visitors are filled inline, so a fill rule can't
+        // reach them; brighten what is already there instead.
+        &:hover,
+        &.is-named {
+          filter: brightness(1.25);
+        }
+      }
+    }
+  }
+
+  // Shown in place of an explanation nobody had: a blank world map and a
+  // world with no visitors look identical, so say which one this is.
+  &-mapNotice {
+    color: var(--muted-color);
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+
+  &-mapError {
+    display: block;
+    margin: 4px 0;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  &-mapCredit {
+    font-size: 11px;
+    margin-top: 6px;
+    text-align: right;
+
+    a {
+      color: var(--muted-color);
+    }
+  }
+
+  // The expanded map (d/39605/41): a fixed overlay, with real browser
+  // fullscreen laid on top of it where that API exists. Both routes land on
+  // these same rules, so the two look identical — the browser one just takes
+  // the address bar with it.
+  &-mapCard.is-expanded {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    // Above the forum modal the dashboard may be rendered inside. 1.8 and 2.0
+    // both set --zindex-modal to 1050; the fallback covers neither having run.
+    z-index: ~"calc(var(--zindex-modal, 1050) + 100)";
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    // Fullscreen elements get an opaque UA background, and the overlay needs
+    // one regardless — the page must not show through the ocean.
+    background: var(--body-bg);
+    display: flex;
+    flex-direction: column;
+
+    // Full screen is where a phone reaches these, so give them a real tap
+    // target rather than the card's deliberately quiet 12px icon.
+    .BirdseyeDashboard-export {
+      font-size: 16px;
+      padding: 8px 10px;
+    }
+
+    .BirdseyeDashboard-map {
+      flex: 1 1 auto;
+      // Without this a flex item refuses to shrink below its content, and the
+      // map would push its own bottom edge off the screen.
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      // Drag to pan, pinch to zoom: the browser must not claim the touch first.
+      touch-action: none;
+      cursor: grab;
+
+      &:active {
+        cursor: grabbing;
+      }
+
+      svg {
+        // Fit the screen whichever way round it is, keeping the aspect ratio,
+        // so the offsets clamp against the map itself rather than a letterbox.
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+      }
+    }
+  }
+
+  &-mapTip {
+    position: absolute;
+    display: none;
+    pointer-events: none;
+    z-index: 5;
+    background: rgba(9, 15, 24, 0.95);
+    color: #f2f6fb;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  }
+}
+
+// While the map is expanded, hold the page behind it still and free the
+// overlay from the forum modal it may be sitting inside: core leaves
+// `transform: scale(1)` on .Modal after the open animation, which makes the
+// modal the containing block for anything positioned fixed, and .Modal-content
+// clips what overflows it. Both are undone the moment the map closes.
+body.birdseye-mapExpanded {
+  overflow: hidden;
+
+  .ModalManager,
+  .Modal,
+  .Modal-content {
+    transform: none !important;
+    overflow: visible !important;
+  }
+}
+
+.BirdseyeDashboard-historyCard {
+  // The table spans every metric column, so on phones the card scrolls
+  // sideways inside itself rather than stretching the page.
+  .BirdseyeDashboard-historyScroll {
+    overflow-x: auto;
+  }
+
+  .BirdseyeDashboard-cardTitleRight .Button.is-active {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+}
+
+.BirdseyeDashboard-historyTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 6px 10px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  th:first-child,
+  td:first-child {
+    text-align: left;
+  }
+
+  thead th {
+    color: var(--muted-color);
+    font-weight: normal;
+    border-bottom: 1px solid var(--control-bg);
+  }
+
+  tbody tr + tr td {
+    border-top: 1px solid var(--control-bg);
+  }
+}
+
+.BirdseyeDashboard-historyLabel {
+  font-weight: bold;
+}
+
+.BirdseyeDashboard-historyPartial {
+  margin-left: 6px;
+  font-weight: normal;
+  color: var(--muted-color);
+  font-size: 11px;
+}
